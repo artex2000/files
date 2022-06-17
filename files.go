@@ -286,12 +286,6 @@ func CurateRecords(list []string, matcher *PatternMatcher) MatcherInputSlice {
 
                 if matcher.Contains(r) {
                         mi := &MatcherInput{ InputString : r, OriginalIndex : i }
-                        /*
-                        mi.InputString = r
-                        mi.OriginalIndex = i
-                        mi.BestScore     = 0
-                        mi.SecondBest    = 0
-                        */
                         result = append(result, mi)
                 }
         }
@@ -305,10 +299,8 @@ func RankRecords(list MatcherInputSlice, matcher *PatternMatcher) {
 }
 
 func InitPatternMatcher(pattern string, matcher_type int) *PatternMatcher {
-        r := &PatternMatcher{}
+        r := &PatternMatcher{ Pattern : pattern, MatcherType : matcher_type}
 
-        r.Pattern     = pattern
-        r.MatcherType = matcher_type
         r.CaseSensitive = false
         for _, s := range (pattern) {
                 if unicode.IsUpper(s) {
@@ -339,7 +331,9 @@ func (pm *PatternMatcher) Rank(mi *MatcherInput) {
 
         for y := 1; y < lp; y += 1 {
                 for x := 1; x < li; x += 1 {
+                        //current pattern symbol (0-indexed)
                         cp := pm.Pattern[y - 1]
+                        //current input string symbol (0-indexed)
                         ci := mi.InputString[x - 1]
 
                         idx := y * li + x               //current score matrix cell index
